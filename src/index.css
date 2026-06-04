@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-perform-primary: #0ea5e9;
+  --color-perform-dark: #0f172a;
+}
 
 html,
 body,
