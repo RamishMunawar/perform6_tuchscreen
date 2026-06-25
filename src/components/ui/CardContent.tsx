@@ -78,9 +78,9 @@ export function StartHereContent({
   duration,
 }: StartHereContentProps) {
   return (
-    <div className="relative flex h-full items-center justify-center p-4 text-center sm:p-6">
+    <div className="relative flex h-full items-center justify-center p-3 text-center sm:p-4 md:p-5">
       <div>
-        <h2 className="p6-hero mb-4">{title}</h2>
+        <h2 className="p6-hero mb-2 sm:mb-3">{title}</h2>
         <p className="p6-body mb-2 text-white/90">{bullets}</p>
         <p className="p6-small p6-muted">{description}</p>
       </div>
