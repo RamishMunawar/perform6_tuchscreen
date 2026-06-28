@@ -9,6 +9,8 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
+    // esbuild keeps both backdrop-filter variants; Lightning CSS drops the unprefixed one.
+    cssMinify: 'esbuild',
   },
   server: {
     port: 5173,

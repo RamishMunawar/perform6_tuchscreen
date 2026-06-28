@@ -376,8 +376,8 @@ body,
       transparent 55%
     ),
     rgba(0, 4, 12, 0.58);
-  backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
 }
 
 .p6-session-modal {
@@ -396,8 +396,8 @@ body,
     rgba(12, 22, 38, 0.42) 48%,
     rgba(6, 12, 22, 0.52) 100%
   );
-  backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.06),
     0 0 24px rgba(74, 163, 255, 0.12),
@@ -510,8 +510,8 @@ body,
     rgba(255, 255, 255, 0.12) 0%,
     rgba(8, 18, 32, 0.55) 100%
   );
-  backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
   box-shadow:
     0 0 0 1px var(--p6-modal-accent),
     0 0 20px var(--p6-modal-accent-glow),
@@ -633,8 +633,8 @@ body,
     rgba(255, 255, 255, 0.1) 0%,
     rgba(255, 255, 255, 0.03) 100%
   );
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   color: rgba(255, 255, 255, 0.88);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
@@ -1072,8 +1072,8 @@ body,
     rgba(255, 255, 255, 0.03) 30%,
     rgba(6, 12, 22, 0.5) 100%
   );
-  backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
