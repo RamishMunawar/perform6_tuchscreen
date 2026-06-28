@@ -13,6 +13,7 @@ export function useSessionPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const volumeBeforeMuteRef = useRef(1);
+  const userUnmutedRef = useRef(false);
   const {
     visible: controlsVisible,
     reveal: onRevealControls,
@@ -36,11 +37,45 @@ export function useSessionPlayer({
     else void video.play().catch(() => {});
   }, []);
 
+  const attemptPlay = useCallback(async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    try {
+      await video.play();
+      return;
+    } catch {
+      video.muted = true;
+      setMuted(true);
+      try {
+        await video.play();
+      } catch {
+        /* ignored */
+      }
+    }
+  }, []);
+
+  const unmuteOnGesture = useCallback(() => {
+    if (attractMode || userUnmutedRef.current) return;
+
+    userUnmutedRef.current = true;
+    setMuted(false);
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = false;
+    video.volume = volumeBeforeMuteRef.current;
+    setVolume(volumeBeforeMuteRef.current);
+    void video.play().catch(() => {});
+  }, [attractMode]);
+
   useEffect(() => {
     if (!open) return;
 
+    userUnmutedRef.current = false;
     setPaused(false);
-    setMuted(false);
+    setMuted(true);
     setVolume(1);
     volumeBeforeMuteRef.current = 1;
     setTimeRemaining(initialTimeRemaining);
@@ -50,11 +85,29 @@ export function useSessionPlayer({
     const video = videoRef.current;
     if (video) {
       video.currentTime = 0;
-      void video.play().catch(() => {});
+      video.muted = true;
+      video.volume = 1;
+      void attemptPlay();
     }
 
     return clearHideTimer;
-  }, [open, initialTimeRemaining, initialProgress, videoSrc, resetControls, clearHideTimer]);
+  }, [open, initialTimeRemaining, initialProgress, videoSrc, resetControls, clearHideTimer, attemptPlay]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onCanPlay = () => {
+      if (!paused) void attemptPlay();
+    };
+
+    video.addEventListener('canplay', onCanPlay);
+    if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) onCanPlay();
+
+    return () => video.removeEventListener('canplay', onCanPlay);
+  }, [open, paused, videoSrc, attemptPlay]);
 
   useEffect(() => {
     if (!open || paused || attractMode) return;
@@ -121,9 +174,10 @@ export function useSessionPlayer({
   );
 
   const handleTogglePlay = useCallback(() => {
+    unmuteOnGesture();
     setPaused((p) => !p);
     onRevealControls();
-  }, [onRevealControls]);
+  }, [onRevealControls, unmuteOnGesture]);
 
   const handleClose = useCallback(() => {
     clearHideTimer();
@@ -134,7 +188,10 @@ export function useSessionPlayer({
     (nextVolume: number) => {
       const video = videoRef.current;
       const nextMuted = nextVolume === 0;
-      if (nextVolume > 0) volumeBeforeMuteRef.current = nextVolume;
+      if (nextVolume > 0) {
+        volumeBeforeMuteRef.current = nextVolume;
+        userUnmutedRef.current = true;
+      }
       setMuted(nextMuted);
       setVolume(nextVolume);
       if (video) {
@@ -150,6 +207,7 @@ export function useSessionPlayer({
     const video = videoRef.current;
     if (muted) {
       const restored = volumeBeforeMuteRef.current > 0 ? volumeBeforeMuteRef.current : 1;
+      userUnmutedRef.current = true;
       setMuted(false);
       setVolume(restored);
       if (video) {
@@ -169,7 +227,8 @@ export function useSessionPlayer({
   }, [onRevealControls, muted, volume]);
 
   const handleFullscreen = useCallback(() => {
-    const el = playerRef.current;
+    const video = videoRef.current;
+    const el = video ?? playerRef.current;
     if (!el) return;
     if (document.fullscreenElement) {
       void document.exitFullscreen();
@@ -178,6 +237,11 @@ export function useSessionPlayer({
     }
     onRevealControls();
   }, [onRevealControls]);
+
+  const handleRevealControls = useCallback(() => {
+    unmuteOnGesture();
+    onRevealControls();
+  }, [onRevealControls, unmuteOnGesture]);
 
   return {
     videoRef,
@@ -191,7 +255,7 @@ export function useSessionPlayer({
     bufferedRatio,
     volume,
     muted,
-    onRevealControls,
+    onRevealControls: handleRevealControls,
     onTogglePlay: handleTogglePlay,
     onSeek: handleSeek,
     onVolumeChange: handleVolumeChange,

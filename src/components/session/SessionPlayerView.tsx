@@ -145,11 +145,14 @@ export function SessionPlayerView({
         <div className="p6-session-player__video-wrap">
           <video
             ref={videoRef}
+            key={videoSrc}
             className="p6-session-player__video"
             src={videoSrc}
             playsInline
-            loop
-            muted={attractMode}
+            autoPlay
+            muted={muted}
+            preload="auto"
+            loop={attractMode}
           />
           <div className="p6-session-player__video-shade" aria-hidden />
         </div>
